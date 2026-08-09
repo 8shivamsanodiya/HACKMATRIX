@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL || "https://hackmatrix-mi53.onrender.com";
+
 function MealHistory() {
 
   const [meals, setMeals] = useState([]);
@@ -21,7 +23,7 @@ function MealHistory() {
     try {
 
       const response = await fetch(
-        "https://hackmatrix-mi53.onrender.com/api/meals/history"
+        `${API_URL}/api/meals/history`
       );
 
       const data = await response.json();
@@ -97,7 +99,7 @@ function MealHistory() {
     try {
 
       const response = await fetch(
-        "https://hackmatrix-mi53.onrender.com/api/meals/history",
+        `${API_URL}/api/meals/history`,
         {
           method: "POST",
 
