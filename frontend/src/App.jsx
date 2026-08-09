@@ -1,4 +1,3 @@
-
 import "./App.css";
 
 import {
@@ -14,21 +13,15 @@ import VolunteerDashboard from "./pages/VolunteerDashboard";
 import NGODashboard from "./pages/NGODashboard";
 import MealHistory from "./pages/MealHistory";
 
-
-// =========================================================
-// HOME PAGE
-// =========================================================
-
 function Home() {
   return (
-    <div>
+    <div className="app">
 
-      {/* NAVBAR */}
       <nav className="navbar">
-
-        <div className="logo">
-          🌱 FoodBridge
-        </div>
+        <Link to="/" className="logo">
+          <span className="logo-mark">🌱</span>
+          <span>FoodBridge</span>
+        </Link>
 
         <div className="nav-links">
           <a href="#problem">The Problem</a>
@@ -37,455 +30,462 @@ function Home() {
           <a href="#impact">Impact</a>
         </div>
 
+        <Link to="/login" className="nav-button">
+          Get Started
+        </Link>
       </nav>
 
+      <main>
 
-      {/* HERO SECTION */}
-      <section className="hero">
+        <section className="hero">
 
-        <div className="hero-content">
+          <div className="hero-background">
+            <div className="hero-orb hero-orb-one"></div>
+            <div className="hero-orb hero-orb-two"></div>
+            <div className="hero-grid"></div>
+          </div>
 
-          <p className="hero-tag">
-            AI-POWERED FOOD WASTE PREVENTION
-          </p>
+          <div className="hero-content">
 
-          <h1>
-            Feed People.
-            <br />
-            <span>Not Landfills.</span>
-          </h1>
+            <div className="hero-eyebrow">
+              <span className="status-dot"></span>
+              AI-POWERED FOOD WASTE PREVENTION
+            </div>
 
-          <p className="hero-description">
-            FoodBridge uses AI-powered demand prediction to help
-            kitchens prepare the right amount of food — and quickly
-            redirect unavoidable surplus to people who need it.
-          </p>
+            <h1>
+              Feed People.
+              <br />
+              <span>Not Landfills.</span>
+            </h1>
 
-          <div className="hero-buttons">
+            <p className="hero-description">
+              FoodBridge uses AI-powered demand prediction to help
+              kitchens prepare the right amount of food — then quickly
+              redirect unavoidable surplus to people who need it.
+            </p>
 
-            <Link to="/login" className="primary-button">
-              Explore FoodBridge →
-            </Link>
+            <div className="hero-buttons">
+              <Link to="/login" className="primary-button">
+                Explore FoodBridge
+                <span>→</span>
+              </Link>
 
-            <a href="#how-it-works" className="secondary-button">
-              See How It Works
-            </a>
+              <a href="#how-it-works" className="secondary-button">
+                <span className="play-icon">▶</span>
+                See How It Works
+              </a>
+            </div>
+
+            <div className="hero-trust">
+              <div className="trust-item">
+                <strong>AI</strong>
+                <span>Demand Prediction</span>
+              </div>
+
+              <div className="trust-divider"></div>
+
+              <div className="trust-item">
+                <strong>QR</strong>
+                <span>Rapid Redistribution</span>
+              </div>
+
+              <div className="trust-divider"></div>
+
+              <div className="trust-item">
+                <strong>24/7</strong>
+                <span>Food Monitoring</span>
+              </div>
+            </div>
 
           </div>
 
-        </div>
+          <div className="hero-visual">
 
+            <div className="visual-glow"></div>
 
-        {/* HERO VISUAL */}
-        <div className="hero-visual">
+            <div className="prediction-card">
 
-          <div className="prediction-card">
+              <div className="card-header">
+                <div className="ai-title">
+                  <div className="ai-symbol">✦</div>
+                  <div>
+                    <strong>AI Prediction</strong>
+                    <span>FoodBridge Intelligence</span>
+                  </div>
+                </div>
 
-            <div className="card-header">
-              <span>🤖 AI Prediction</span>
-              <span className="live">● LIVE</span>
+                <span className="live">
+                  <span></span>
+                  LIVE
+                </span>
+              </div>
+
+              <div className="prediction-label">
+                TOMORROW'S EXPECTED DEMAND
+              </div>
+
+              <div className="meal-number">
+                510
+                <span>meals</span>
+              </div>
+
+              <div className="prediction-chart">
+                <div className="chart-line chart-line-one"></div>
+                <div className="chart-line chart-line-two"></div>
+                <div className="chart-line chart-line-three"></div>
+
+                <div className="chart-bars">
+                  <span style={{ height: "35%" }}></span>
+                  <span style={{ height: "48%" }}></span>
+                  <span style={{ height: "42%" }}></span>
+                  <span style={{ height: "64%" }}></span>
+                  <span style={{ height: "57%" }}></span>
+                  <span style={{ height: "76%" }}></span>
+                  <span className="active-bar" style={{ height: "88%" }}></span>
+                </div>
+              </div>
+
+              <div className="prediction-footer">
+                <div>
+                  <span>Prediction confidence</span>
+                  <strong>87%</strong>
+                </div>
+
+                <div className="confidence-ring">
+                  87
+                </div>
+              </div>
+
             </div>
 
-            <p className="small-text">
-              Tomorrow's expected demand
-            </p>
+            <div className="flow-card">
 
-            <div className="meal-number">
-              510
-              <span> meals</span>
+              <div className="flow-item">
+                <div className="flow-icon">🍱</div>
+                <span>Prepare</span>
+              </div>
+
+              <div className="flow-arrow">→</div>
+
+              <div className="flow-item">
+                <div className="flow-icon">🥗</div>
+                <span>Consume</span>
+              </div>
+
+              <div className="flow-arrow">→</div>
+
+              <div className="flow-item">
+                <div className="flow-icon">📱</div>
+                <span>Donate</span>
+              </div>
+
             </div>
 
-            <div className="prediction-bar">
-              <div className="prediction-fill"></div>
+            <div className="floating-stat floating-stat-one">
+              <span>♻</span>
+              <div>
+                <strong>32%</strong>
+                <small>less waste</small>
+              </div>
             </div>
 
-            <p className="confidence">
-              87% prediction confidence
-            </p>
+            <div className="floating-stat floating-stat-two">
+              <span>♥</span>
+              <div>
+                <strong>1.8K</strong>
+                <small>meals donated</small>
+              </div>
+            </div>
 
           </div>
 
+        </section>
 
-          <div className="flow-card">
+        <section id="problem" className="problem-section">
+
+          <div className="section-intro">
 
             <div>
-              <span>🍱</span>
-              <p>Prepare</p>
+              <p className="section-tag">THE PROBLEM</p>
+
+              <h2>
+                Food waste isn't just
+                <br />
+                <span>wasted food.</span>
+              </h2>
             </div>
 
-            <div className="arrow">→</div>
+            <p className="section-description">
+              Every uneaten meal represents wasted water, energy, land,
+              transportation, labour and cooking resources.
+            </p>
 
+          </div>
+
+          <div className="problem-cards">
+
+            <div className="problem-card">
+              <div className="problem-card-number">01</div>
+              <div className="problem-icon">💧</div>
+              <h3>Wasted Water</h3>
+              <p>
+                Water used to grow and prepare food is wasted when
+                that food is never eaten.
+              </p>
+              <div className="card-line"></div>
+            </div>
+
+            <div className="problem-card featured">
+              <div className="problem-card-number">02</div>
+              <div className="problem-icon">⚡</div>
+              <h3>Wasted Energy</h3>
+              <p>
+                Energy used in farming, transportation, refrigeration
+                and cooking is lost.
+              </p>
+              <div className="card-line"></div>
+            </div>
+
+            <div className="problem-card">
+              <div className="problem-card-number">03</div>
+              <div className="problem-icon">🌍</div>
+              <h3>Climate Impact</h3>
+              <p>
+                Food waste contributes to greenhouse gas emissions
+                throughout its lifecycle.
+              </p>
+              <div className="card-line"></div>
+            </div>
+
+          </div>
+
+        </section>
+
+        <section id="solution" className="solution-section">
+
+          <div className="solution-background"></div>
+
+          <div className="solution-content">
+
+            <p className="section-tag">OUR APPROACH</p>
+
+            <h2>
+              Prevent waste
+              <br />
+              <span>before it happens.</span>
+            </h2>
+
+            <p className="solution-description">
+              Instead of waiting for food to become surplus,
+              FoodBridge predicts demand using historical meal
+              consumption data.
+            </p>
+
+            <div className="solution-flow">
+
+              <div className="solution-step">
+                <div className="solution-number">01</div>
+                <div className="solution-icon">◈</div>
+                <span>Predict</span>
+                <p>AI forecasts meal demand.</p>
+              </div>
+
+              <div className="solution-connector"></div>
+
+              <div className="solution-step">
+                <div className="solution-number">02</div>
+                <div className="solution-icon">◇</div>
+                <span>Prepare</span>
+                <p>Kitchen prepares closer to demand.</p>
+              </div>
+
+              <div className="solution-connector"></div>
+
+              <div className="solution-step">
+                <div className="solution-number">03</div>
+                <div className="solution-icon">✦</div>
+                <span>Redistribute</span>
+                <p>Surplus reaches NGOs quickly.</p>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <section id="how-it-works" className="how-section">
+
+          <div className="how-background"></div>
+
+          <div className="how-header">
             <div>
-              <span>🥗</span>
-              <p>Consume</p>
+              <p className="section-tag">HOW FOODBRIDGE WORKS</p>
+
+              <h2>
+                One loop.
+                <br />
+                <span>Less waste.</span>
+              </h2>
             </div>
 
-            <div className="arrow">→</div>
+            <p>
+              From historical data to real-world redistribution,
+              every step is designed to keep food moving toward
+              people instead of landfills.
+            </p>
+          </div>
 
+          <div className="steps">
+
+            <div className="step">
+              <div className="step-top">
+                <div className="step-number">01</div>
+                <div className="step-icon">▦</div>
+              </div>
+
+              <h3>Historical Data</h3>
+
+              <p>
+                FoodBridge learns how many people usually
+                eat on different days and occasions.
+              </p>
+            </div>
+
+            <div className="step">
+              <div className="step-top">
+                <div className="step-number">02</div>
+                <div className="step-icon">✦</div>
+              </div>
+
+              <h3>AI Prediction</h3>
+
+              <p>
+                The system predicts tomorrow's expected
+                meal demand.
+              </p>
+            </div>
+
+            <div className="step">
+              <div className="step-top">
+                <div className="step-number">03</div>
+                <div className="step-icon">⌁</div>
+              </div>
+
+              <h3>Smart Preparation</h3>
+
+              <p>
+                Kitchens prepare an optimized quantity
+                instead of relying on guesswork.
+              </p>
+            </div>
+
+            <div className="step">
+              <div className="step-top">
+                <div className="step-number">04</div>
+                <div className="step-icon">♥</div>
+              </div>
+
+              <h3>Rapid Donation</h3>
+
+              <p>
+                QR-enabled volunteers connect surplus
+                food with NGOs before it expires.
+              </p>
+            </div>
+
+          </div>
+
+        </section>
+
+        <section id="impact" className="impact-section">
+
+          <div className="impact-header">
             <div>
-              <span>📱</span>
-              <p>Donate</p>
+              <p className="section-tag">OUR IMPACT</p>
+
+              <h2>
+                Turning surplus into
+                <br />
+                <span>impact.</span>
+              </h2>
+            </div>
+
+            <div className="impact-message">
+              <span className="impact-dot"></span>
+              Building a measurable food rescue network.
+            </div>
+          </div>
+
+          <div className="impact-grid">
+
+            <div className="impact-card">
+              <span className="impact-label">MEALS OPTIMIZED</span>
+              <strong>12,480</strong>
+              <small>+18.4% this month</small>
+            </div>
+
+            <div className="impact-card">
+              <span className="impact-label">MEALS DIVERTED</span>
+              <strong>3,240</strong>
+              <small>from potential waste</small>
+            </div>
+
+            <div className="impact-card">
+              <span className="impact-label">MEALS DONATED</span>
+              <strong>1,820</strong>
+              <small>reaching communities</small>
+            </div>
+
+            <div className="impact-card highlight">
+              <span className="impact-label">NGO PARTNERS</span>
+              <strong>48</strong>
+              <small>and growing</small>
             </div>
 
           </div>
 
-        </div>
+        </section>
 
-      </section>
+        <section className="cta-section">
 
+          <div className="cta-glow"></div>
 
-      {/* PROBLEM SECTION */}
-      <section id="problem" className="problem-section">
-
-        <p className="section-tag">
-          THE PROBLEM
-        </p>
-
-        <h2>
-          Food waste isn't just
-          <span> wasted food.</span>
-        </h2>
-
-        <p className="section-description">
-          Every uneaten meal represents wasted water, energy, land,
-          transportation, labour and cooking resources.
-        </p>
-
-
-        <div className="problem-cards">
-
-          <div className="problem-card">
-
-            <div className="problem-icon">
-              💧
-            </div>
-
-            <h3>
-              Wasted Water
-            </h3>
-
-            <p>
-              Water used to grow and prepare food is wasted when
-              that food is never eaten.
-            </p>
-
-          </div>
-
-
-          <div className="problem-card">
-
-            <div className="problem-icon">
-              ⚡
-            </div>
-
-            <h3>
-              Wasted Energy
-            </h3>
-
-            <p>
-              Energy used in farming, transportation, refrigeration
-              and cooking is lost.
-            </p>
-
-          </div>
-
-
-          <div className="problem-card">
-
-            <div className="problem-icon">
-              🌍
-            </div>
-
-            <h3>
-              Climate Impact
-            </h3>
-
-            <p>
-              Food waste contributes to greenhouse gas emissions
-              throughout its lifecycle.
-            </p>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* SOLUTION SECTION */}
-      <section id="solution" className="solution-section">
-
-        <div className="solution-content">
-
-          <p className="section-tag">
-            OUR APPROACH
-          </p>
+          <p className="section-tag">JOIN THE FOODBRIDGE NETWORK</p>
 
           <h2>
-            Prevent waste
+            Let's build a world where
             <br />
-            <span>before it happens.</span>
+            <span>food feeds people, not landfills.</span>
           </h2>
 
-          <p>
-            Instead of waiting for food to become surplus,
-            FoodBridge predicts demand using historical meal
-            consumption data.
+          <p className="cta-description">
+            Predict smarter. Prevent waste. Redistribute faster.
           </p>
 
+          <Link to="/login" className="primary-button cta-button">
+            Get Started
+            <span>→</span>
+          </Link>
 
-          <div className="solution-flow">
+        </section>
 
-            <div className="solution-step">
+      </main>
 
-              <strong>
-                01
-              </strong>
-
-              <span>
-                Predict
-              </span>
-
-              <p>
-                AI forecasts meal demand.
-              </p>
-
-            </div>
-
-
-            <div className="solution-step">
-
-              <strong>
-                02
-              </strong>
-
-              <span>
-                Prepare
-              </span>
-
-              <p>
-                Kitchen prepares closer to demand.
-              </p>
-
-            </div>
-
-
-            <div className="solution-step">
-
-              <strong>
-                03
-              </strong>
-
-              <span>
-                Redistribute
-              </span>
-
-              <p>
-                Surplus reaches NGOs quickly.
-              </p>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* HOW IT WORKS */}
-      <section id="how-it-works" className="how-section">
-
-        <p className="section-tag">
-          HOW FOODBRIDGE WORKS
-        </p>
-
-        <h2>
-          One loop.
-          <span> Less waste.</span>
-        </h2>
-
-
-        <div className="steps">
-
-          <div className="step">
-
-            <div className="step-number">
-              1
-            </div>
-
-            <h3>
-              Historical Data
-            </h3>
-
-            <p>
-              FoodBridge learns how many people usually
-              eat on different days and occasions.
-            </p>
-
-          </div>
-
-
-          <div className="step">
-
-            <div className="step-number">
-              2
-            </div>
-
-            <h3>
-              AI Prediction
-            </h3>
-
-            <p>
-              The system predicts tomorrow's expected
-              meal demand.
-            </p>
-
-          </div>
-
-
-          <div className="step">
-
-            <div className="step-number">
-              3
-            </div>
-
-            <h3>
-              Smart Preparation
-            </h3>
-
-            <p>
-              Kitchens prepare an optimized quantity
-              instead of relying on guesswork.
-            </p>
-
-          </div>
-
-
-          <div className="step">
-
-            <div className="step-number">
-              4
-            </div>
-
-            <h3>
-              Rapid Donation
-            </h3>
-
-            <p>
-              If surplus remains, QR-enabled volunteers
-              connect it with NGOs before the food expires.
-            </p>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* IMPACT */}
-      <section id="impact" className="impact-section">
-
-        <p className="section-tag">
-          OUR IMPACT
-        </p>
-
-        <h2>
-          Turning surplus into
-          <span> impact.</span>
-        </h2>
-
-
-        <div className="impact-grid">
-
-          <div className="impact-card">
-
-            <strong>
-              12,480
-            </strong>
-
-            <span>
-              Meals Optimized
-            </span>
-
-          </div>
-
-
-          <div className="impact-card">
-
-            <strong>
-              3,240
-            </strong>
-
-            <span>
-              Meals Diverted
-            </span>
-
-          </div>
-
-
-          <div className="impact-card">
-
-            <strong>
-              1,820
-            </strong>
-
-            <span>
-              Meals Donated
-            </span>
-
-          </div>
-
-
-          <div className="impact-card">
-
-            <strong>
-              48
-            </strong>
-
-            <span>
-              NGO Partners
-            </span>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* FINAL CTA */}
-      <section className="cta-section">
-
-        <h2>
-          Let's build a world where
-          <br />
-          <span>
-            food feeds people, not landfills.
-          </span>
-        </h2>
-
-        <Link
-          to="/login"
-          className="primary-button"
-        >
-          Get Started →
-        </Link>
-
-      </section>
-
-
-      {/* FOOTER */}
       <footer>
 
-        <div className="logo">
-          🌱 FoodBridge
+        <div className="footer-brand">
+          <Link to="/" className="logo">
+            <span className="logo-mark">🌱</span>
+            <span>FoodBridge</span>
+          </Link>
+
+          <p>Predict. Prevent. Redistribute.</p>
         </div>
 
-        <p>
-          Predict. Prevent. Redistribute.
-        </p>
+        <div className="footer-center">
+          <span>AI-powered food waste prevention</span>
+        </div>
 
         <p className="copyright">
           © 2026 FoodBridge
@@ -497,16 +497,9 @@ function Home() {
   );
 }
 
-
-// =========================================================
-// APP / ROUTING
-// =========================================================
-
 function App() {
-
   return (
     <BrowserRouter>
-
       <Routes>
 
         <Route
@@ -540,10 +533,8 @@ function App() {
         />
 
       </Routes>
-
     </BrowserRouter>
   );
 }
-
 
 export default App;
