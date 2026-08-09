@@ -189,10 +189,11 @@ select {
 .hero h1 {
   max-width: 850px;
   font-size: clamp(58px, 7.5vw, 104px);
-  line-height: 0.91;
-  letter-spacing: -6px;
+  line-height: 1.05;
+  letter-spacing: -2px;
   margin-bottom: 34px;
   font-weight: 900;
+  color: #ffffff;
 }
 
 .hero h1 span,
@@ -576,8 +577,8 @@ h2 span {
 .impact-header h2,
 .cta-section h2 {
   font-size: clamp(40px, 5.2vw, 68px);
-  line-height: 0.98;
-  letter-spacing: -4px;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
   color: #10231a;
 }
 
