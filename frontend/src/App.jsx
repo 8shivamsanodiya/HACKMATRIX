@@ -1,28 +1,3 @@
-import { useEffect, useState } from 'react';
-
-function App() {
-  const [message, setMessage] = useState('');
-
-  // Fallback to localhost if the Render environment variable is not defined yet
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-
-  useEffect(() => {
-    fetch(`${API_URL}/api/data`)
-      .then((res) => res.json())
-      .then((data) => setMessage(data.message))
-      .catch((err) => console.error("Error fetching data:", err));
-  }, [API_URL]);
-
-  return (
-    <div>
-      <h1>Frontend</h1>
-      <p>Backend says: {message}</p>
-    </div>
-  );
-}
-
-export default App;
-
 import "./App.css";
 
 import {
