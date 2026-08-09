@@ -1,3 +1,4 @@
+
 import "./App.css";
 
 import {
@@ -14,15 +15,17 @@ import NGODashboard from "./pages/NGODashboard";
 import MealHistory from "./pages/MealHistory";
 
 
-
-
+// =========================================================
+// HOME PAGE
+// =========================================================
 
 function Home() {
   return (
-    <div className="app">
+    <div>
 
       {/* NAVBAR */}
       <nav className="navbar">
+
         <div className="logo">
           🌱 FoodBridge
         </div>
@@ -33,9 +36,7 @@ function Home() {
           <a href="#how-it-works">How It Works</a>
           <a href="#impact">Impact</a>
         </div>
-<Link to="/login" className="nav-button">
-  Get Started
-</Link>
+
       </nav>
 
 
@@ -61,13 +62,15 @@ function Home() {
           </p>
 
           <div className="hero-buttons">
-            <Link to="/login" className="primary-button">
-  Explore FoodBridge →
-</Link>
 
-           <a href="#how-it-works" className="secondary-button">
-  See How It Works
-</a>
+            <Link to="/login" className="primary-button">
+              Explore FoodBridge →
+            </Link>
+
+            <a href="#how-it-works" className="secondary-button">
+              See How It Works
+            </a>
+
           </div>
 
         </div>
@@ -152,30 +155,56 @@ function Home() {
         <div className="problem-cards">
 
           <div className="problem-card">
-            <div className="problem-icon">💧</div>
-            <h3>Wasted Water</h3>
+
+            <div className="problem-icon">
+              💧
+            </div>
+
+            <h3>
+              Wasted Water
+            </h3>
+
             <p>
               Water used to grow and prepare food is wasted when
               that food is never eaten.
             </p>
+
           </div>
 
+
           <div className="problem-card">
-            <div className="problem-icon">⚡</div>
-            <h3>Wasted Energy</h3>
+
+            <div className="problem-icon">
+              ⚡
+            </div>
+
+            <h3>
+              Wasted Energy
+            </h3>
+
             <p>
               Energy used in farming, transportation, refrigeration
               and cooking is lost.
             </p>
+
           </div>
 
+
           <div className="problem-card">
-            <div className="problem-icon">🌍</div>
-            <h3>Climate Impact</h3>
+
+            <div className="problem-icon">
+              🌍
+            </div>
+
+            <h3>
+              Climate Impact
+            </h3>
+
             <p>
               Food waste contributes to greenhouse gas emissions
               throughout its lifecycle.
             </p>
+
           </div>
 
         </div>
@@ -204,24 +233,57 @@ function Home() {
             consumption data.
           </p>
 
+
           <div className="solution-flow">
 
             <div className="solution-step">
-              <strong>01</strong>
-              <span>Predict</span>
-              <p>AI forecasts meal demand.</p>
+
+              <strong>
+                01
+              </strong>
+
+              <span>
+                Predict
+              </span>
+
+              <p>
+                AI forecasts meal demand.
+              </p>
+
             </div>
 
-            <div className="solution-step">
-              <strong>02</strong>
-              <span>Prepare</span>
-              <p>Kitchen prepares closer to demand.</p>
-            </div>
 
             <div className="solution-step">
-              <strong>03</strong>
-              <span>Redistribute</span>
-              <p>Surplus reaches NGOs quickly.</p>
+
+              <strong>
+                02
+              </strong>
+
+              <span>
+                Prepare
+              </span>
+
+              <p>
+                Kitchen prepares closer to demand.
+              </p>
+
+            </div>
+
+
+            <div className="solution-step">
+
+              <strong>
+                03
+              </strong>
+
+              <span>
+                Redistribute
+              </span>
+
+              <p>
+                Surplus reaches NGOs quickly.
+              </p>
+
             </div>
 
           </div>
@@ -243,42 +305,78 @@ function Home() {
           <span> Less waste.</span>
         </h2>
 
+
         <div className="steps">
 
           <div className="step">
-            <div className="step-number">1</div>
-            <h3>Historical Data</h3>
+
+            <div className="step-number">
+              1
+            </div>
+
+            <h3>
+              Historical Data
+            </h3>
+
             <p>
               FoodBridge learns how many people usually
               eat on different days and occasions.
             </p>
+
           </div>
 
+
           <div className="step">
-            <div className="step-number">2</div>
-            <h3>AI Prediction</h3>
+
+            <div className="step-number">
+              2
+            </div>
+
+            <h3>
+              AI Prediction
+            </h3>
+
             <p>
               The system predicts tomorrow's expected
               meal demand.
             </p>
+
           </div>
 
+
           <div className="step">
-            <div className="step-number">3</div>
-            <h3>Smart Preparation</h3>
+
+            <div className="step-number">
+              3
+            </div>
+
+            <h3>
+              Smart Preparation
+            </h3>
+
             <p>
               Kitchens prepare an optimized quantity
               instead of relying on guesswork.
             </p>
+
           </div>
 
+
           <div className="step">
-            <div className="step-number">4</div>
-            <h3>Rapid Donation</h3>
+
+            <div className="step-number">
+              4
+            </div>
+
+            <h3>
+              Rapid Donation
+            </h3>
+
             <p>
               If surplus remains, QR-enabled volunteers
               connect it with NGOs before the food expires.
             </p>
+
           </div>
 
         </div>
@@ -298,26 +396,58 @@ function Home() {
           <span> impact.</span>
         </h2>
 
+
         <div className="impact-grid">
 
           <div className="impact-card">
-            <strong>12,480</strong>
-            <span>Meals Optimized</span>
+
+            <strong>
+              12,480
+            </strong>
+
+            <span>
+              Meals Optimized
+            </span>
+
           </div>
 
-          <div className="impact-card">
-            <strong>3,240</strong>
-            <span>Meals Diverted</span>
-          </div>
 
           <div className="impact-card">
-            <strong>1,820</strong>
-            <span>Meals Donated</span>
+
+            <strong>
+              3,240
+            </strong>
+
+            <span>
+              Meals Diverted
+            </span>
+
           </div>
 
+
           <div className="impact-card">
-            <strong>48</strong>
-            <span>NGO Partners</span>
+
+            <strong>
+              1,820
+            </strong>
+
+            <span>
+              Meals Donated
+            </span>
+
+          </div>
+
+
+          <div className="impact-card">
+
+            <strong>
+              48
+            </strong>
+
+            <span>
+              NGO Partners
+            </span>
+
           </div>
 
         </div>
@@ -331,12 +461,17 @@ function Home() {
         <h2>
           Let's build a world where
           <br />
-          <span>food feeds people, not landfills.</span>
+          <span>
+            food feeds people, not landfills.
+          </span>
         </h2>
 
-        <button className="primary-button">
+        <Link
+          to="/login"
+          className="primary-button"
+        >
           Get Started →
-        </button>
+        </Link>
 
       </section>
 
@@ -362,20 +497,50 @@ function Home() {
   );
 }
 
+
+// =========================================================
+// APP / ROUTING
+// =========================================================
+
 function App() {
+
   return (
     <BrowserRouter>
+
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<AdminDashboard />} />
-        <Route path="/volunteer" element={<VolunteerDashboard />} />
-        <Route path="/ngo" element={<NGODashboard />} />
+
         <Route
-  path="/meal-history"
-  element={<MealHistory />}
-/>
+          path="/"
+          element={<Home />}
+        />
+
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+
+        <Route
+          path="/dashboard"
+          element={<AdminDashboard />}
+        />
+
+        <Route
+          path="/volunteer"
+          element={<VolunteerDashboard />}
+        />
+
+        <Route
+          path="/ngo"
+          element={<NGODashboard />}
+        />
+
+        <Route
+          path="/meal-history"
+          element={<MealHistory />}
+        />
+
       </Routes>
+
     </BrowserRouter>
   );
 }

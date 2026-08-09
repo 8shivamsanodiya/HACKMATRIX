@@ -28,6 +28,10 @@ def initialize_database():
 
     connection = get_db_connection()
 
+    # -----------------------------------------------------
+    # MEAL HISTORY TABLE
+    # -----------------------------------------------------
+
     connection.execute("""
         CREATE TABLE IF NOT EXISTS meal_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,6 +42,36 @@ def initialize_database():
         )
     """)
 
+    # -----------------------------------------------------
+    # DONATIONS TABLE
+    # -----------------------------------------------------
+
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS donations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            donation_date TEXT NOT NULL,
+            meals INTEGER NOT NULL,
+            description TEXT,
+            status TEXT NOT NULL DEFAULT 'Available',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+       # -----------------------------------------------------
+    # VOLUNTEERS TABLE
+    # -----------------------------------------------------
+
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS volunteers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            phone TEXT,
+            availability TEXT NOT NULL DEFAULT 'Available',
+            role TEXT,
+            status TEXT NOT NULL DEFAULT 'Active',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
     connection.commit()
     connection.close()
 
@@ -69,13 +103,16 @@ def add_meal_record():
     meals_consumed = data.get("meals_consumed")
 
     if not meal_date or not day_name:
+
         return jsonify({
             "error": "meal_date and day_name are required"
         }), 400
 
     try:
+
         meals_prepared = int(meals_prepared)
         meals_consumed = int(meals_consumed)
+
     except (TypeError, ValueError):
 
         return jsonify({
@@ -86,6 +123,12 @@ def add_meal_record():
 
         return jsonify({
             "error": "Meal values cannot be negative"
+        }), 400
+
+    if meals_consumed > meals_prepared:
+
+        return jsonify({
+            "error": "Meals consumed cannot be greater than meals prepared"
         }), 400
 
     connection = get_db_connection()
@@ -189,12 +232,14 @@ def smart_prediction():
     # -----------------------------------------------------
 
     try:
+
         attendance = int(attendance)
+
     except (TypeError, ValueError):
+
         attendance = 0
 
     attendance = max(0, attendance)
-
 
     # =====================================================
     # ZERO ATTENDANCE
@@ -211,7 +256,6 @@ def smart_prediction():
             "safety_buffer": 0,
             "recommended_meals": 0
         })
-
 
     # =====================================================
     # GET HISTORICAL DATA
@@ -232,7 +276,6 @@ def smart_prediction():
     historical_average = result["average_consumed"]
     historical_records = result["record_count"]
 
-
     # =====================================================
     # NO HISTORICAL DATA
     # =====================================================
@@ -243,7 +286,6 @@ def smart_prediction():
 
         predicted_demand = attendance
 
-
     # =====================================================
     # HISTORICAL DATA EXISTS
     # =====================================================
@@ -253,9 +295,6 @@ def smart_prediction():
         historical_average = round(
             historical_average
         )
-
-        # Attendance is the main signal.
-        # Historical data makes only a small adjustment.
 
         difference = (
             historical_average - attendance
@@ -290,7 +329,6 @@ def smart_prediction():
             predicted_demand
         )
 
-
     # =====================================================
     # SAFETY BUFFER
     # =====================================================
@@ -304,7 +342,6 @@ def smart_prediction():
         safety_buffer
     )
 
-
     # =====================================================
     # FINAL ZERO PROTECTION
     # =====================================================
@@ -314,7 +351,6 @@ def smart_prediction():
         predicted_demand = 0
         safety_buffer = 0
         recommended_meals = 0
-
 
     # =====================================================
     # RESPONSE
@@ -379,6 +415,547 @@ def get_meal_history_summary():
         })
 
     return jsonify(result)
+
+
+# =========================================================
+# DONATIONS
+# =========================================================
+
+# =========================================================
+# CREATE DONATION
+# =========================================================
+
+@app.route("/api/donations", methods=["POST"])
+def create_donation():
+
+    data = request.get_json() or {}
+
+    donation_date = data.get("donation_date")
+    meals = data.get("meals")
+    description = data.get("description", "")
+
+    # -----------------------------------------------------
+    # VALIDATE DATE
+    # -----------------------------------------------------
+
+    if not donation_date:
+
+        return jsonify({
+            "error": "donation_date is required"
+        }), 400
+
+    # -----------------------------------------------------
+    # VALIDATE MEALS
+    # -----------------------------------------------------
+
+    try:
+
+        meals = int(meals)
+
+    except (TypeError, ValueError):
+
+        return jsonify({
+            "error": "Meals must be a valid number"
+        }), 400
+
+    if meals <= 0:
+
+        return jsonify({
+            "error": "Donation meals must be greater than 0"
+        }), 400
+
+    # -----------------------------------------------------
+    # CHECK AVAILABLE SURPLUS
+    # -----------------------------------------------------
+
+    connection = get_db_connection()
+
+    result = connection.execute("""
+        SELECT
+            COALESCE(
+                SUM(meals_prepared - meals_consumed),
+                0
+            ) AS total_surplus
+        FROM meal_history
+    """).fetchone()
+
+    total_surplus = int(
+        result["total_surplus"] or 0
+    )
+
+    donated_result = connection.execute("""
+        SELECT
+            COALESCE(SUM(meals), 0) AS donated_meals
+        FROM donations
+        WHERE status != 'Cancelled'
+    """).fetchone()
+
+    donated_meals = int(
+        donated_result["donated_meals"] or 0
+    )
+
+    available_surplus = max(
+        0,
+        total_surplus - donated_meals
+    )
+
+    # -----------------------------------------------------
+    # PREVENT OVER-DONATION
+    # -----------------------------------------------------
+
+    if meals > available_surplus:
+
+        connection.close()
+
+        return jsonify({
+            "error": (
+                f"Only {available_surplus} surplus meals "
+                "are currently available."
+            )
+        }), 400
+
+    # -----------------------------------------------------
+    # INSERT DONATION
+    # -----------------------------------------------------
+
+    cursor = connection.execute("""
+        INSERT INTO donations (
+            donation_date,
+            meals,
+            description,
+            status
+        )
+        VALUES (?, ?, ?, ?)
+    """, (
+        donation_date,
+        meals,
+        description,
+        "Available"
+    ))
+
+    connection.commit()
+
+    donation_id = cursor.lastrowid
+
+    connection.close()
+
+    return jsonify({
+        "message": "Donation created successfully 🌱",
+        "id": donation_id,
+        "meals": meals,
+        "status": "Available"
+    }), 201
+
+
+# =========================================================
+# GET ALL DONATIONS
+# =========================================================
+
+@app.route("/api/donations", methods=["GET"])
+def get_donations():
+
+    connection = get_db_connection()
+
+    donations = connection.execute("""
+        SELECT *
+        FROM donations
+        ORDER BY donation_date DESC, id DESC
+    """).fetchall()
+
+    connection.close()
+
+    return jsonify([
+        dict(donation)
+        for donation in donations
+    ])
+
+
+# =========================================================
+# UPDATE DONATION STATUS
+# =========================================================
+
+@app.route("/api/donations/<int:donation_id>/status", methods=["PUT"])
+def update_donation_status(donation_id):
+
+    data = request.get_json() or {}
+
+    status = data.get("status")
+
+    allowed_statuses = [
+        "Available",
+        "Claimed",
+        "Collected",
+        "Cancelled"
+    ]
+
+    if status not in allowed_statuses:
+
+        return jsonify({
+            "error": (
+                "Invalid status. Allowed values: "
+                "Available, Claimed, Collected, Cancelled"
+            )
+        }), 400
+
+    connection = get_db_connection()
+
+    donation = connection.execute("""
+        SELECT *
+        FROM donations
+        WHERE id = ?
+    """, (donation_id,)).fetchone()
+
+    if donation is None:
+
+        connection.close()
+
+        return jsonify({
+            "error": "Donation not found"
+        }), 404
+
+    connection.execute("""
+        UPDATE donations
+        SET status = ?
+        WHERE id = ?
+    """, (
+        status,
+        donation_id
+    ))
+
+    connection.commit()
+
+    connection.close()
+
+    return jsonify({
+        "message": "Donation status updated successfully",
+        "id": donation_id,
+        "status": status
+    })
+
+
+# =========================================================
+# GET DONATION SUMMARY
+# =========================================================
+
+@app.route("/api/donations/summary", methods=["GET"])
+def get_donation_summary():
+
+    connection = get_db_connection()
+
+    result = connection.execute("""
+        SELECT
+            COUNT(*) AS total_donations,
+            COALESCE(SUM(meals), 0) AS total_meals_donated
+        FROM donations
+        WHERE status != 'Cancelled'
+    """).fetchone()
+
+    available = connection.execute("""
+        SELECT
+            COALESCE(SUM(meals), 0) AS available_meals
+        FROM donations
+        WHERE status = 'Available'
+    """).fetchone()
+
+    claimed = connection.execute("""
+        SELECT
+            COALESCE(SUM(meals), 0) AS claimed_meals
+        FROM donations
+        WHERE status IN ('Claimed', 'Collected')
+    """).fetchone()
+
+    connection.close()
+
+    return jsonify({
+        "total_donations": result["total_donations"],
+        "total_meals_donated": result["total_meals_donated"],
+        "available_meals": available["available_meals"],
+        "claimed_meals": claimed["claimed_meals"]
+    })
+
+
+# =========================================================
+# VOLUNTEERS
+# =========================================================
+
+# =========================================================
+# ADD VOLUNTEER
+# =========================================================
+
+@app.route("/api/volunteers", methods=["POST"])
+def create_volunteer():
+
+    data = request.get_json() or {}
+
+    name = data.get("name")
+    phone = data.get("phone", "")
+    availability = data.get(
+        "availability",
+        "Available"
+    )
+    role = data.get("role", "")
+
+    # -----------------------------------------------------
+    # VALIDATE NAME
+    # -----------------------------------------------------
+
+    if not name or not str(name).strip():
+
+        return jsonify({
+            "error": "Volunteer name is required"
+        }), 400
+
+    name = str(name).strip()
+
+    # -----------------------------------------------------
+    # VALIDATE AVAILABILITY
+    # -----------------------------------------------------
+
+    allowed_availability = [
+        "Available",
+        "Busy",
+        "Unavailable"
+    ]
+
+    if availability not in allowed_availability:
+
+        return jsonify({
+            "error": (
+                "Invalid availability. Allowed values: "
+                "Available, Busy, Unavailable"
+            )
+        }), 400
+
+    # -----------------------------------------------------
+    # INSERT VOLUNTEER
+    # -----------------------------------------------------
+
+    connection = get_db_connection()
+
+    cursor = connection.execute("""
+        INSERT INTO volunteers (
+            name,
+            phone,
+            availability,
+            role,
+            status
+        )
+        VALUES (?, ?, ?, ?, ?)
+    """, (
+        name,
+        phone,
+        availability,
+        role,
+        "Active"
+    ))
+
+    connection.commit()
+
+    volunteer_id = cursor.lastrowid
+
+    connection.close()
+
+    return jsonify({
+        "message": "Volunteer added successfully 🌱",
+        "id": volunteer_id
+    }), 201
+
+
+# =========================================================
+# GET ALL VOLUNTEERS
+# =========================================================
+
+@app.route("/api/volunteers", methods=["GET"])
+def get_volunteers():
+
+    connection = get_db_connection()
+
+    volunteers = connection.execute("""
+        SELECT *
+        FROM volunteers
+        ORDER BY id DESC
+    """).fetchall()
+
+    connection.close()
+
+    return jsonify([
+        dict(volunteer)
+        for volunteer in volunteers
+    ])
+
+
+# =========================================================
+# UPDATE VOLUNTEER AVAILABILITY
+# =========================================================
+
+@app.route(
+    "/api/volunteers/<int:volunteer_id>/availability",
+    methods=["PUT"]
+)
+def update_volunteer_availability(volunteer_id):
+
+    data = request.get_json() or {}
+
+    availability = data.get("availability")
+
+    allowed_availability = [
+        "Available",
+        "Busy",
+        "Unavailable"
+    ]
+
+    if availability not in allowed_availability:
+
+        return jsonify({
+            "error": (
+                "Invalid availability. Allowed values: "
+                "Available, Busy, Unavailable"
+            )
+        }), 400
+
+    connection = get_db_connection()
+
+    volunteer = connection.execute("""
+        SELECT *
+        FROM volunteers
+        WHERE id = ?
+    """, (volunteer_id,)).fetchone()
+
+    if volunteer is None:
+
+        connection.close()
+
+        return jsonify({
+            "error": "Volunteer not found"
+        }), 404
+
+    connection.execute("""
+        UPDATE volunteers
+        SET availability = ?
+        WHERE id = ?
+    """, (
+        availability,
+        volunteer_id
+    ))
+
+    connection.commit()
+
+    connection.close()
+
+    return jsonify({
+        "message": "Volunteer availability updated successfully",
+        "id": volunteer_id,
+        "availability": availability
+    })
+
+
+# =========================================================
+# UPDATE VOLUNTEER STATUS
+# =========================================================
+
+@app.route(
+    "/api/volunteers/<int:volunteer_id>/status",
+    methods=["PUT"]
+)
+def update_volunteer_status(volunteer_id):
+
+    data = request.get_json() or {}
+
+    status = data.get("status")
+
+    allowed_statuses = [
+        "Active",
+        "Inactive"
+    ]
+
+    if status not in allowed_statuses:
+
+        return jsonify({
+            "error": (
+                "Invalid status. Allowed values: "
+                "Active, Inactive"
+            )
+        }), 400
+
+    connection = get_db_connection()
+
+    volunteer = connection.execute("""
+        SELECT *
+        FROM volunteers
+        WHERE id = ?
+    """, (volunteer_id,)).fetchone()
+
+    if volunteer is None:
+
+        connection.close()
+
+        return jsonify({
+            "error": "Volunteer not found"
+        }), 404
+
+    connection.execute("""
+        UPDATE volunteers
+        SET status = ?
+        WHERE id = ?
+    """, (
+        status,
+        volunteer_id
+    ))
+
+    connection.commit()
+
+    connection.close()
+
+    return jsonify({
+        "message": "Volunteer status updated successfully",
+        "id": volunteer_id,
+        "status": status
+    })
+
+
+# =========================================================
+# VOLUNTEER SUMMARY
+# =========================================================
+
+@app.route("/api/volunteers/summary", methods=["GET"])
+def get_volunteer_summary():
+
+    connection = get_db_connection()
+
+    total = connection.execute("""
+        SELECT COUNT(*) AS total
+        FROM volunteers
+    """).fetchone()
+
+    available = connection.execute("""
+        SELECT COUNT(*) AS available
+        FROM volunteers
+        WHERE availability = 'Available'
+        AND status = 'Active'
+    """).fetchone()
+
+    busy = connection.execute("""
+        SELECT COUNT(*) AS busy
+        FROM volunteers
+        WHERE availability = 'Busy'
+        AND status = 'Active'
+    """).fetchone()
+
+    unavailable = connection.execute("""
+        SELECT COUNT(*) AS unavailable
+        FROM volunteers
+        WHERE availability = 'Unavailable'
+        OR status = 'Inactive'
+    """).fetchone()
+
+    connection.close()
+
+    return jsonify({
+        "total": total["total"],
+        "available": available["available"],
+        "busy": busy["busy"],
+        "unavailable": unavailable["unavailable"]
+    })
 
 
 # =========================================================
