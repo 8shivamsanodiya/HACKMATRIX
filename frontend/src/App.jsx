@@ -11,6 +11,11 @@ import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
 import VolunteerDashboard from "./pages/VolunteerDashboard";
 import NGODashboard from "./pages/NGODashboard";
+import MealHistory from "./pages/MealHistory";
+
+
+
+
 
 function Home() {
   return (
@@ -366,9 +371,14 @@ function App() {
         <Route path="/dashboard" element={<AdminDashboard />} />
         <Route path="/volunteer" element={<VolunteerDashboard />} />
         <Route path="/ngo" element={<NGODashboard />} />
+        <Route
+  path="/meal-history"
+  element={<MealHistory />}
+/>
       </Routes>
     </BrowserRouter>
   );
 }
+
 
 export default App;
