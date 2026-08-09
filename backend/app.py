@@ -3,34 +3,23 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import sqlite3
 
+import os
+
 app = Flask(__name__)
 
 CORS(app)
 
-DATABASE = "foodbridge.db"
+DATABASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "foodbridge.db")
 
-
-# =========================================================
-# DATABASE CONNECTION
-# =========================================================
 
 def get_db_connection():
     connection = sqlite3.connect(DATABASE)
     connection.row_factory = sqlite3.Row
     return connection
 
-
-# =========================================================
-# CREATE DATABASE
-# =========================================================
-
 def initialize_database():
 
     connection = get_db_connection()
-
-    # -----------------------------------------------------
-    # MEAL HISTORY TABLE
-    # -----------------------------------------------------
 
     connection.execute("""
         CREATE TABLE IF NOT EXISTS meal_history (
@@ -42,10 +31,6 @@ def initialize_database():
         )
     """)
 
-    # -----------------------------------------------------
-    # DONATIONS TABLE
-    # -----------------------------------------------------
-
     connection.execute("""
         CREATE TABLE IF NOT EXISTS donations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,10 +41,6 @@ def initialize_database():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
-
-       # -----------------------------------------------------
-    # VOLUNTEERS TABLE
-    # -----------------------------------------------------
 
     connection.execute("""
         CREATE TABLE IF NOT EXISTS volunteers (
@@ -75,22 +56,12 @@ def initialize_database():
     connection.commit()
     connection.close()
 
-
-# =========================================================
-# HOME
-# =========================================================
-
 @app.route("/")
 def home():
 
     return jsonify({
         "message": "FoodBridge API is running 🌱"
     })
-
-
-# =========================================================
-# ADD MEAL RECORD
-# =========================================================
 
 @app.route("/api/meals/history", methods=["POST"])
 def add_meal_record():
@@ -159,11 +130,6 @@ def add_meal_record():
         "id": new_id
     }), 201
 
-
-# =========================================================
-# GET ALL MEAL HISTORY
-# =========================================================
-
 @app.route("/api/meals/history", methods=["GET"])
 def get_meal_history():
 
@@ -181,11 +147,6 @@ def get_meal_history():
         dict(meal)
         for meal in meals
     ])
-
-
-# =========================================================
-# DAY-WISE HISTORICAL AVERAGE
-# =========================================================
 
 @app.route("/api/meals/prediction/<day_name>")
 def get_day_prediction(day_name):
@@ -214,11 +175,6 @@ def get_day_prediction(day_name):
         "records": record_count
     })
 
-
-# =========================================================
-# SMART MEAL PREDICTION
-# =========================================================
-
 @app.route("/api/prediction", methods=["POST"])
 def smart_prediction():
 
@@ -227,20 +183,12 @@ def smart_prediction():
     attendance = data.get("attendance", 0)
     day_name = data.get("day_name", "")
 
-    # -----------------------------------------------------
-    # Convert attendance safely
-    # -----------------------------------------------------
-
     try:
         attendance = int(attendance)
     except (TypeError, ValueError):
         attendance = 0
 
     attendance = max(0, attendance)
-
-    # =====================================================
-    # GET HISTORICAL DATA
-    # =====================================================
 
     connection = get_db_connection()
 
@@ -257,9 +205,6 @@ def smart_prediction():
     historical_average = result["average_consumed"] if result else None
     historical_records = result["record_count"] if result else 0
 
-    # =====================================================
-    # CASE 1: NO ATTENDANCE SPECIFIED (AUTOMATIC HISTORICAL BASELINE)
-    # =====================================================
 
     if attendance == 0:
         if historical_average is not None and historical_records > 0:
@@ -290,9 +235,6 @@ def smart_prediction():
                 "prediction_type": "no_data"
             })
 
-    # =====================================================
-    # CASE 2: CUSTOM ATTENDANCE SPECIFIED (FINE-TUNED)
-    # =====================================================
 
     if historical_average is None:
         historical_average = 0
@@ -303,7 +245,7 @@ def smart_prediction():
         adjustment = round(difference * 0.10)
         predicted_demand = attendance + adjustment
 
-        # Keep prediction within +/- 10% of expected attendance
+        
         minimum_demand = round(attendance * 0.90)
         maximum_demand = round(attendance * 1.10)
         predicted_demand = max(minimum_demand, predicted_demand)
@@ -322,11 +264,6 @@ def smart_prediction():
         "recommended_meals": recommended_meals,
         "prediction_type": "attendance_adjusted"
     })
-
-
-# =========================================================
-# WEEKLY HISTORY SUMMARY
-# =========================================================
 
 @app.route("/api/meals/history/summary")
 def get_meal_history_summary():
@@ -373,15 +310,6 @@ def get_meal_history_summary():
 
     return jsonify(result)
 
-
-# =========================================================
-# DONATIONS
-# =========================================================
-
-# =========================================================
-# CREATE DONATION
-# =========================================================
-
 @app.route("/api/donations", methods=["POST"])
 def create_donation():
 
@@ -391,19 +319,11 @@ def create_donation():
     meals = data.get("meals")
     description = data.get("description", "")
 
-    # -----------------------------------------------------
-    # VALIDATE DATE
-    # -----------------------------------------------------
-
     if not donation_date:
 
         return jsonify({
             "error": "donation_date is required"
         }), 400
-
-    # -----------------------------------------------------
-    # VALIDATE MEALS
-    # -----------------------------------------------------
 
     try:
 
@@ -420,10 +340,6 @@ def create_donation():
         return jsonify({
             "error": "Donation meals must be greater than 0"
         }), 400
-
-    # -----------------------------------------------------
-    # CHECK AVAILABLE SURPLUS
-    # -----------------------------------------------------
 
     connection = get_db_connection()
 
@@ -456,10 +372,6 @@ def create_donation():
         total_surplus - donated_meals
     )
 
-    # -----------------------------------------------------
-    # PREVENT OVER-DONATION
-    # -----------------------------------------------------
-
     if meals > available_surplus:
 
         connection.close()
@@ -470,10 +382,6 @@ def create_donation():
                 "are currently available."
             )
         }), 400
-
-    # -----------------------------------------------------
-    # INSERT DONATION
-    # -----------------------------------------------------
 
     cursor = connection.execute("""
         INSERT INTO donations (
@@ -504,10 +412,6 @@ def create_donation():
     }), 201
 
 
-# =========================================================
-# GET ALL DONATIONS
-# =========================================================
-
 @app.route("/api/donations", methods=["GET"])
 def get_donations():
 
@@ -526,10 +430,6 @@ def get_donations():
         for donation in donations
     ])
 
-
-# =========================================================
-# UPDATE DONATION STATUS
-# =========================================================
 
 @app.route("/api/donations/<int:donation_id>/status", methods=["PUT"])
 def update_donation_status(donation_id):
@@ -589,11 +489,6 @@ def update_donation_status(donation_id):
         "status": status
     })
 
-
-# =========================================================
-# GET DONATION SUMMARY
-# =========================================================
-
 @app.route("/api/donations/summary", methods=["GET"])
 def get_donation_summary():
 
@@ -631,14 +526,6 @@ def get_donation_summary():
     })
 
 
-# =========================================================
-# VOLUNTEERS
-# =========================================================
-
-# =========================================================
-# ADD VOLUNTEER
-# =========================================================
-
 @app.route("/api/volunteers", methods=["POST"])
 def create_volunteer():
 
@@ -652,10 +539,6 @@ def create_volunteer():
     )
     role = data.get("role", "")
 
-    # -----------------------------------------------------
-    # VALIDATE NAME
-    # -----------------------------------------------------
-
     if not name or not str(name).strip():
 
         return jsonify({
@@ -663,10 +546,6 @@ def create_volunteer():
         }), 400
 
     name = str(name).strip()
-
-    # -----------------------------------------------------
-    # VALIDATE AVAILABILITY
-    # -----------------------------------------------------
 
     allowed_availability = [
         "Available",
@@ -682,11 +561,7 @@ def create_volunteer():
                 "Available, Busy, Unavailable"
             )
         }), 400
-
-    # -----------------------------------------------------
-    # INSERT VOLUNTEER
-    # -----------------------------------------------------
-
+    
     connection = get_db_connection()
 
     cursor = connection.execute("""
@@ -718,10 +593,6 @@ def create_volunteer():
     }), 201
 
 
-# =========================================================
-# GET ALL VOLUNTEERS
-# =========================================================
-
 @app.route("/api/volunteers", methods=["GET"])
 def get_volunteers():
 
@@ -739,11 +610,6 @@ def get_volunteers():
         dict(volunteer)
         for volunteer in volunteers
     ])
-
-
-# =========================================================
-# UPDATE VOLUNTEER AVAILABILITY
-# =========================================================
 
 @app.route(
     "/api/volunteers/<int:volunteer_id>/availability",
@@ -805,11 +671,6 @@ def update_volunteer_availability(volunteer_id):
         "availability": availability
     })
 
-
-# =========================================================
-# UPDATE VOLUNTEER STATUS
-# =========================================================
-
 @app.route(
     "/api/volunteers/<int:volunteer_id>/status",
     methods=["PUT"]
@@ -869,11 +730,6 @@ def update_volunteer_status(volunteer_id):
         "status": status
     })
 
-
-# =========================================================
-# VOLUNTEER SUMMARY
-# =========================================================
-
 @app.route("/api/volunteers/summary", methods=["GET"])
 def get_volunteer_summary():
 
@@ -914,10 +770,6 @@ def get_volunteer_summary():
         "unavailable": unavailable["unavailable"]
     })
 
-
-# =========================================================
-# START SERVER
-# =========================================================
 
 if __name__ == "__main__":
 
