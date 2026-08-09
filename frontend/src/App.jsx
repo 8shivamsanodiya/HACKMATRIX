@@ -1,6 +1,18 @@
 import "./App.css";
 
-function App() {
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link,
+} from "react-router-dom";
+
+import Login from "./pages/Login";
+import AdminDashboard from "./pages/AdminDashboard";
+import VolunteerDashboard from "./pages/VolunteerDashboard";
+import NGODashboard from "./pages/NGODashboard";
+
+function Home() {
   return (
     <div className="app">
 
@@ -16,10 +28,9 @@ function App() {
           <a href="#how-it-works">How It Works</a>
           <a href="#impact">Impact</a>
         </div>
-
-        <button className="nav-button">
-          Get Started
-        </button>
+<Link to="/login" className="nav-button">
+  Get Started
+</Link>
       </nav>
 
 
@@ -45,13 +56,13 @@ function App() {
           </p>
 
           <div className="hero-buttons">
-            <button className="primary-button">
-              Explore FoodBridge →
-            </button>
+            <Link to="/login" className="primary-button">
+  Explore FoodBridge →
+</Link>
 
-            <button className="secondary-button">
-              See How It Works
-            </button>
+           <a href="#how-it-works" className="secondary-button">
+  See How It Works
+</a>
           </div>
 
         </div>
@@ -343,6 +354,20 @@ function App() {
       </footer>
 
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<AdminDashboard />} />
+        <Route path="/volunteer" element={<VolunteerDashboard />} />
+        <Route path="/ngo" element={<NGODashboard />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
