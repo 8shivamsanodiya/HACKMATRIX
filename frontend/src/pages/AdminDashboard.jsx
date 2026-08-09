@@ -706,6 +706,8 @@ function AdminDashboard() {
   // =====================================================
 
   useEffect(() => {
+    fetchPrediction();
+
     fetchMealHistory();
 
     fetchDonations();
@@ -833,7 +835,7 @@ function AdminDashboard() {
             <input
               type="number"
               min="0"
-              placeholder="Expected attendance"
+              placeholder="Optional: Expected attendance to fine-tune"
               value={attendance}
               onChange={(event) =>
                 setAttendance(
@@ -984,7 +986,7 @@ function AdminDashboard() {
           <input
             type="number"
             min="0"
-            placeholder="Enter expected attendance"
+            placeholder="Optional: Enter expected attendance to fine-tune"
             value={attendance}
             onChange={(event) =>
               setAttendance(

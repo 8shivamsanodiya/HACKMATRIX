@@ -232,30 +232,11 @@ def smart_prediction():
     # -----------------------------------------------------
 
     try:
-
         attendance = int(attendance)
-
     except (TypeError, ValueError):
-
         attendance = 0
 
     attendance = max(0, attendance)
-
-    # =====================================================
-    # ZERO ATTENDANCE
-    # =====================================================
-
-    if attendance == 0:
-
-        return jsonify({
-            "day": day_name,
-            "expected_attendance": 0,
-            "historical_average": 0,
-            "historical_records": 0,
-            "predicted_demand": 0,
-            "safety_buffer": 0,
-            "recommended_meals": 0
-        })
 
     # =====================================================
     # GET HISTORICAL DATA
@@ -273,88 +254,63 @@ def smart_prediction():
 
     connection.close()
 
-    historical_average = result["average_consumed"]
-    historical_records = result["record_count"]
+    historical_average = result["average_consumed"] if result else None
+    historical_records = result["record_count"] if result else 0
 
     # =====================================================
-    # NO HISTORICAL DATA
-    # =====================================================
-
-    if historical_average is None:
-
-        historical_average = 0
-
-        predicted_demand = attendance
-
-    # =====================================================
-    # HISTORICAL DATA EXISTS
-    # =====================================================
-
-    else:
-
-        historical_average = round(
-            historical_average
-        )
-
-        difference = (
-            historical_average - attendance
-        )
-
-        adjustment = round(
-            difference * 0.10
-        )
-
-        predicted_demand = (
-            attendance + adjustment
-        )
-
-        # Keep prediction within +/- 10%
-        # of expected attendance.
-
-        minimum_demand = round(
-            attendance * 0.90
-        )
-
-        maximum_demand = round(
-            attendance * 1.10
-        )
-
-        predicted_demand = max(
-            minimum_demand,
-            predicted_demand
-        )
-
-        predicted_demand = min(
-            maximum_demand,
-            predicted_demand
-        )
-
-    # =====================================================
-    # SAFETY BUFFER
-    # =====================================================
-
-    safety_buffer = round(
-        predicted_demand * 0.05
-    )
-
-    recommended_meals = (
-        predicted_demand +
-        safety_buffer
-    )
-
-    # =====================================================
-    # FINAL ZERO PROTECTION
+    # CASE 1: NO ATTENDANCE SPECIFIED (AUTOMATIC HISTORICAL BASELINE)
     # =====================================================
 
     if attendance == 0:
+        if historical_average is not None and historical_records > 0:
+            historical_average = round(historical_average)
+            predicted_demand = historical_average
+            safety_buffer = round(predicted_demand * 0.05)
+            recommended_meals = predicted_demand + safety_buffer
 
-        predicted_demand = 0
-        safety_buffer = 0
-        recommended_meals = 0
+            return jsonify({
+                "day": day_name,
+                "expected_attendance": 0,
+                "historical_average": historical_average,
+                "historical_records": historical_records,
+                "predicted_demand": predicted_demand,
+                "safety_buffer": safety_buffer,
+                "recommended_meals": recommended_meals,
+                "prediction_type": "historical_baseline"
+            })
+        else:
+            return jsonify({
+                "day": day_name,
+                "expected_attendance": 0,
+                "historical_average": 0,
+                "historical_records": 0,
+                "predicted_demand": 0,
+                "safety_buffer": 0,
+                "recommended_meals": 0,
+                "prediction_type": "no_data"
+            })
 
     # =====================================================
-    # RESPONSE
+    # CASE 2: CUSTOM ATTENDANCE SPECIFIED (FINE-TUNED)
     # =====================================================
+
+    if historical_average is None:
+        historical_average = 0
+        predicted_demand = attendance
+    else:
+        historical_average = round(historical_average)
+        difference = historical_average - attendance
+        adjustment = round(difference * 0.10)
+        predicted_demand = attendance + adjustment
+
+        # Keep prediction within +/- 10% of expected attendance
+        minimum_demand = round(attendance * 0.90)
+        maximum_demand = round(attendance * 1.10)
+        predicted_demand = max(minimum_demand, predicted_demand)
+        predicted_demand = min(maximum_demand, predicted_demand)
+
+    safety_buffer = round(predicted_demand * 0.05)
+    recommended_meals = predicted_demand + safety_buffer
 
     return jsonify({
         "day": day_name,
@@ -363,7 +319,8 @@ def smart_prediction():
         "historical_records": historical_records,
         "predicted_demand": predicted_demand,
         "safety_buffer": safety_buffer,
-        "recommended_meals": recommended_meals
+        "recommended_meals": recommended_meals,
+        "prediction_type": "attendance_adjusted"
     })
 
 
