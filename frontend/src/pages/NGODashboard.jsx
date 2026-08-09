@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "https://hackmatrixfood.onrender.com";
+const API_URL = "https://hackmatrix-mi53.onrender.com";
 
 function NGODashboard() {
   const navigate = useNavigate();

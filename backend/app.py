@@ -775,9 +775,10 @@ def get_volunteer_summary():
     })
 
 
-if __name__ == "__main__":
+initialize_database()
 
-    initialize_database()
+
+if __name__ == "__main__":
 
     app.run(
         debug=True,

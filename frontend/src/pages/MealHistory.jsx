@@ -21,7 +21,7 @@ function MealHistory() {
     try {
 
       const response = await fetch(
-        "https://hackmatrixfood.onrender.com/api/meals/history"
+        "https://hackmatrix-mi53.onrender.com/api/meals/history"
       );
 
       const data = await response.json();
@@ -97,7 +97,7 @@ function MealHistory() {
     try {
 
       const response = await fetch(
-        "https://hackmatrixfood.onrender.com/api/meals/history",
+        "https://hackmatrix-mi53.onrender.com/api/meals/history",
         {
           method: "POST",
 
