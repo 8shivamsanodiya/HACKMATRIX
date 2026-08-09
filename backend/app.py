@@ -9,6 +9,17 @@ app = Flask(__name__)
 
 CORS(app)
 
+@app.route('/api/data', methods=['GET'])
+def get_data():
+    return jsonify({"message": "Hello from the Flask backend on Render!"})
+
+if __name__ == '__main__':
+    # Render sets a PORT environment variable automatically
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
+
+
+
 DATABASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "foodbridge.db")
 
 
