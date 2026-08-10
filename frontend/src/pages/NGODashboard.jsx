@@ -4,11 +4,7 @@ import { API_URL } from "../config";
 
 function NGODashboard() {
   const navigate = useNavigate();
-
-  // Navigation menu state
   const [activeMenu, setActiveMenu] = useState("Dashboard");
-
-  // Donations State
   const [donations, setDonations] = useState([]);
   const [donationLoading, setDonationLoading] = useState(false);
   const [donationSummary, setDonationSummary] = useState({
@@ -18,7 +14,6 @@ function NGODashboard() {
     claimed_meals: 0,
   });
 
-  // Load initial data
   useEffect(() => {
     fetchDonations();
     fetchDonationSummary();
@@ -57,14 +52,11 @@ function NGODashboard() {
 
   const updateDonationStatus = async (donationId, status) => {
     try {
-      const response = await fetch(
-        `${API_URL}/api/donations/${donationId}/status`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status }),
-        }
-      );
+      const response = await fetch(`${API_URL}/api/donations/${donationId}/status`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not update donation");
       
@@ -77,16 +69,11 @@ function NGODashboard() {
     }
   };
 
-  // Navigation items
   const menuItems = [
     { name: "Dashboard", icon: "▦" },
     { name: "Available Food", icon: "🍱" },
     { name: "My Claims & Received", icon: "🤝" },
   ];
-
-  // =====================================================
-  // SUB-VIEWS
-  // =====================================================
 
   const renderDashboard = () => {
     const availableDonations = donations.filter((d) => d.status === "Available");
@@ -98,35 +85,18 @@ function NGODashboard() {
           <div>
             <p className="dashboard-label">NGO PORTAL</p>
             <h1>Bridge the gap. End hunger.</h1>
-            <p>
-              Coordinate directly with local commercial kitchens, claim fresh surplus food, and distribute it to families in need.
-            </p>
+            <p>Coordinate directly with local commercial kitchens, claim fresh surplus food, and distribute it to families in need.</p>
           </div>
         </div>
 
-        {/* STATISTICS */}
         <div className="stat-grid">
-          <div className="stat-card">
-            <p>Available Surplus Meals</p>
-            <strong>{donationSummary.available_meals}</strong>
-          </div>
-          <div className="stat-card">
-            <p>Total Meals Redirected</p>
-            <strong>{donationSummary.total_meals_donated}</strong>
-          </div>
-          <div className="stat-card">
-            <p>Claimed & In-Transit</p>
-            <strong>{donationSummary.claimed_meals}</strong>
-          </div>
-          <div className="stat-card">
-            <p>Active Claims</p>
-            <strong>{claimedByNGO.filter(c => c.status === "Claimed").length}</strong>
-          </div>
+          <div className="stat-card"><p>Available Surplus Meals</p><strong>{donationSummary.available_meals}</strong></div>
+          <div className="stat-card"><p>Total Meals Redirected</p><strong>{donationSummary.total_meals_donated}</strong></div>
+          <div className="stat-card"><p>Claimed & In-Transit</p><strong>{donationSummary.claimed_meals}</strong></div>
+          <div className="stat-card"><p>Active Claims</p><strong>{claimedByNGO.filter(c => c.status === "Claimed").length}</strong></div>
         </div>
 
-        {/* DUAL PANELS */}
         <div className="dashboard-grid">
-          {/* Available Food */}
           <section className="panel">
             <div className="panel-header">
               <div>
@@ -137,10 +107,7 @@ function NGODashboard() {
             </div>
             <div className="historical-table" style={{ marginTop: "15px" }}>
               <div className="table-row table-header">
-                <span>Date</span>
-                <span>Meals</span>
-                <span>Description</span>
-                <span>Action</span>
+                <span>Date</span><span>Meals</span><span>Description</span><span>Action</span>
               </div>
               {availableDonations.slice(0, 5).map((d) => (
                 <div className="table-row" key={d.id}>
@@ -164,7 +131,6 @@ function NGODashboard() {
             </div>
           </section>
 
-          {/* Claimed/Completed list */}
           <section className="panel">
             <div className="panel-header">
               <div>
@@ -174,17 +140,12 @@ function NGODashboard() {
             </div>
             <div className="historical-table" style={{ marginTop: "15px" }}>
               <div className="table-row table-header">
-                <span>Meals</span>
-                <span>Status</span>
-                <span>Action</span>
+                <span>Meals</span><span>Status</span><span>Action</span>
               </div>
               {claimedByNGO.map((d) => (
                 <div className="table-row" key={d.id}>
                   <strong>{d.meals} meals</strong>
-                  <span style={{
-                    color: d.status === "Collected" ? "#789087" : "#e0932c",
-                    fontWeight: "bold"
-                  }}>
+                  <span style={{ color: d.status === "Collected" ? "#789087" : "#e0932c", fontWeight: "bold" }}>
                     {d.status === "Collected" ? "Collected ✓" : "Claimed (In Transit)"}
                   </span>
                   <div>
@@ -216,7 +177,6 @@ function NGODashboard() {
 
   const renderAvailableFood = () => {
     const availableDonations = donations.filter((d) => d.status === "Available");
-
     return (
       <div className="prediction-page">
         <div className="prediction-heading">
@@ -231,13 +191,8 @@ function NGODashboard() {
         <section className="historical-section">
           <div className="historical-table">
             <div className="table-row table-header">
-              <span>Date</span>
-              <span>Meals Count</span>
-              <span>Description</span>
-              <span>Status</span>
-              <span>Action</span>
+              <span>Date</span><span>Meals Count</span><span>Description</span><span>Status</span><span>Action</span>
             </div>
-
             {donationLoading ? (
               <div className="table-row"><span>Loading available donations...</span></div>
             ) : availableDonations.length === 0 ? (
@@ -267,7 +222,6 @@ function NGODashboard() {
 
   const renderClaimsReceived = () => {
     const myClaims = donations.filter((d) => d.status === "Claimed" || d.status === "Collected");
-
     return (
       <div className="prediction-page">
         <div className="prediction-heading">
@@ -282,13 +236,8 @@ function NGODashboard() {
         <section className="historical-section">
           <div className="historical-table">
             <div className="table-row table-header">
-              <span>Date</span>
-              <span>Meals Count</span>
-              <span>Description</span>
-              <span>Status</span>
-              <span>Action</span>
+              <span>Date</span><span>Meals Count</span><span>Description</span><span>Status</span><span>Action</span>
             </div>
-
             {donationLoading ? (
               <div className="table-row"><span>Loading claims history...</span></div>
             ) : myClaims.length === 0 ? (
@@ -299,10 +248,7 @@ function NGODashboard() {
                   <span>{donation.donation_date}</span>
                   <strong>{donation.meals}</strong>
                   <span>{donation.description || "Kitchen Surplus"}</span>
-                  <span style={{
-                    color: donation.status === "Collected" ? "#789087" : "#e0932c",
-                    fontWeight: "bold"
-                  }}>
+                  <span style={{ color: donation.status === "Collected" ? "#789087" : "#e0932c", fontWeight: "bold" }}>
                     {donation.status === "Collected" ? "Received ✓" : "In Transit (Claimed)"}
                   </span>
                   <div>
@@ -338,19 +284,15 @@ function NGODashboard() {
 
   const renderContent = () => {
     switch (activeMenu) {
-      case "Available Food":
-        return renderAvailableFood();
-      case "My Claims & Received":
-        return renderClaimsReceived();
+      case "Available Food": return renderAvailableFood();
+      case "My Claims & Received": return renderClaimsReceived();
       case "Dashboard":
-      default:
-        return renderDashboard();
+      default: return renderDashboard();
     }
   };
 
   return (
     <div className="dashboard-layout" style={{ display: "flex", minHeight: "100vh" }}>
-      {/* SIDEBAR */}
       <aside className="sidebar" style={{ width: "250px", background: "#10231a", color: "white" }}>
         <div className="sidebar-logo">🌱 FoodBridge</div>
         <p className="sidebar-label">NGO PORTAL</p>
@@ -367,26 +309,16 @@ function NGODashboard() {
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <button className="menu-item" onClick={() => navigate("/")}>
-            ← Home
-          </button>
-          <button className="menu-item" onClick={() => navigate("/login")}>
-            ⇥ Logout
-          </button>
+          <button className="menu-item" onClick={() => navigate("/")}>← Home</button>
+          <button className="menu-item" onClick={() => navigate("/login")}>⇥ Logout</button>
         </div>
       </aside>
 
-      {/* MAIN CONTENT AREA */}
       <main className="dashboard-main" style={{ flex: 1, padding: "35px 45px 60px", background: "#f4f8f5" }}>
         <header className="dashboard-topbar" style={{ display: "flex", justifyContent: "space-between", marginBottom: "45px" }}>
-          <div>
-            <span>FoodBridge</span> / <strong>{activeMenu}</strong>
-          </div>
-          <div>
-            🤝 NGO Partner
-          </div>
+          <div>FoodBridge / <strong>{activeMenu}</strong></div>
+          <div>🤝 NGO Partner</div>
         </header>
-
         <div className="dashboard-content">{renderContent()}</div>
       </main>
     </div>

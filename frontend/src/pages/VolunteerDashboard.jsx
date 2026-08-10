@@ -4,32 +4,15 @@ import { API_URL } from "../config";
 
 function VolunteerDashboard() {
   const navigate = useNavigate();
-
-  // Navigation menu state
   const [activeMenu, setActiveMenu] = useState("Dashboard");
-
-  // Volunteers State
   const [volunteers, setVolunteers] = useState([]);
   const [activeVolunteerId, setActiveVolunteerId] = useState("");
   const [volunteerLoading, setVolunteerLoading] = useState(false);
-  const [volunteerSummary, setVolunteerSummary] = useState({
-    total: 0,
-    available: 0,
-    busy: 0,
-    unavailable: 0,
-  });
-
-  // Donations/Pickups State
+  const [volunteerSummary, setVolunteerSummary] = useState({ total: 0, available: 0, busy: 0, unavailable: 0 });
   const [donations, setDonations] = useState([]);
   const [donationLoading, setDonationLoading] = useState(false);
-  const [donationSummary, setDonationSummary] = useState({
-    total_donations: 0,
-    total_meals_donated: 0,
-    available_meals: 0,
-    claimed_meals: 0,
-  });
+  const [donationSummary, setDonationSummary] = useState({ total_donations: 0, total_meals_donated: 0, available_meals: 0, claimed_meals: 0 });
 
-  // Load initial data
   useEffect(() => {
     fetchVolunteers();
     fetchVolunteerSummary();
@@ -44,8 +27,6 @@ function VolunteerDashboard() {
       if (!response.ok) throw new Error("Could not fetch volunteers");
       const data = await response.json();
       setVolunteers(Array.isArray(data) ? data : []);
-      
-      // Auto-select first volunteer as active if none selected
       if (Array.isArray(data) && data.length > 0 && !activeVolunteerId) {
         setActiveVolunteerId(data[0].id.toString());
       }
@@ -105,14 +86,11 @@ function VolunteerDashboard() {
       return;
     }
     try {
-      const response = await fetch(
-        `${API_URL}/api/volunteers/${activeVolunteerId}/availability`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ availability }),
-        }
-      );
+      const response = await fetch(`${API_URL}/api/volunteers/${activeVolunteerId}/availability`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ availability }),
+      });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not update availability");
       
@@ -127,14 +105,11 @@ function VolunteerDashboard() {
 
   const updateDonationStatus = async (donationId, status) => {
     try {
-      const response = await fetch(
-        `${API_URL}/api/donations/${donationId}/status`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status }),
-        }
-      );
+      const response = await fetch(`${API_URL}/api/donations/${donationId}/status`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not update donation");
       
@@ -146,22 +121,12 @@ function VolunteerDashboard() {
     }
   };
 
-  const getActiveVolunteer = () => {
-    return volunteers.find((v) => v.id.toString() === activeVolunteerId);
-  };
-
-  const activeVolunteer = getActiveVolunteer();
-
-  // Navigation items
+  const activeVolunteer = volunteers.find((v) => v.id.toString() === activeVolunteerId);
   const menuItems = [
     { name: "Dashboard", icon: "▦" },
     { name: "Available Pickups", icon: "🚴" },
     { name: "My Claims & History", icon: "📦" },
   ];
-
-  // =====================================================
-  // SUB-VIEWS
-  // =====================================================
 
   const renderDashboard = () => {
     const availablePickups = donations.filter((d) => d.status === "Available");
@@ -173,13 +138,10 @@ function VolunteerDashboard() {
           <div>
             <p className="dashboard-label">VOLUNTEER HUB</p>
             <h1>Redistribute surplus food efficiently.</h1>
-            <p>
-              Simulate availability, coordinate logistics, and make sure fresh meals reach their destination.
-            </p>
+            <p>Simulate availability, coordinate logistics, and make sure fresh meals reach their destination.</p>
           </div>
         </div>
 
-        {/* PROFILE SIMULATOR PANEL */}
         <section className="panel" style={{ marginBottom: "30px" }}>
           <div className="panel-header">
             <div>
@@ -189,9 +151,7 @@ function VolunteerDashboard() {
           </div>
           <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", alignItems: "center" }}>
             <div style={{ flex: 1, minWidth: "250px" }}>
-              <label style={{ display: "block", marginBottom: "8px", fontSize: "12px", fontWeight: "bold" }}>
-                Active Volunteer Account
-              </label>
+              <label style={{ display: "block", marginBottom: "8px", fontSize: "12px", fontWeight: "bold" }}>Active Volunteer Account</label>
               <select
                 value={activeVolunteerId}
                 onChange={(e) => setActiveVolunteerId(e.target.value)}
@@ -213,43 +173,26 @@ function VolunteerDashboard() {
 
             {activeVolunteer && (
               <div style={{ flex: 1, minWidth: "250px" }}>
-                <label style={{ display: "block", marginBottom: "8px", fontSize: "12px", fontWeight: "bold" }}>
-                  Quick Status Update
-                </label>
+                <label style={{ display: "block", marginBottom: "8px", fontSize: "12px", fontWeight: "bold" }}>Quick Status Update</label>
                 <div style={{ display: "flex", gap: "10px" }}>
                   <button
                     className={`secondary-button ${activeVolunteer.availability === "Available" ? "active" : ""}`}
                     onClick={() => updateVolunteerAvailability("Available")}
-                    style={{
-                      flex: 1,
-                      background: activeVolunteer.availability === "Available" ? "#1b9b5d" : "",
-                      color: activeVolunteer.availability === "Available" ? "#fff" : "",
-                      padding: "10px",
-                    }}
+                    style={{ flex: 1, background: activeVolunteer.availability === "Available" ? "#1b9b5d" : "", color: activeVolunteer.availability === "Available" ? "#fff" : "", padding: "10px" }}
                   >
                     🟢 Available
                   </button>
                   <button
                     className={`secondary-button ${activeVolunteer.availability === "Busy" ? "active" : ""}`}
                     onClick={() => updateVolunteerAvailability("Busy")}
-                    style={{
-                      flex: 1,
-                      background: activeVolunteer.availability === "Busy" ? "#e0932c" : "",
-                      color: activeVolunteer.availability === "Busy" ? "#fff" : "",
-                      padding: "10px",
-                    }}
+                    style={{ flex: 1, background: activeVolunteer.availability === "Busy" ? "#e0932c" : "", color: activeVolunteer.availability === "Busy" ? "#fff" : "", padding: "10px" }}
                   >
                     🟡 Busy
                   </button>
                   <button
                     className={`secondary-button ${activeVolunteer.availability === "Unavailable" ? "active" : ""}`}
                     onClick={() => updateVolunteerAvailability("Unavailable")}
-                    style={{
-                      flex: 1,
-                      background: activeVolunteer.availability === "Unavailable" ? "#dc635b" : "",
-                      color: activeVolunteer.availability === "Unavailable" ? "#fff" : "",
-                      padding: "10px",
-                    }}
+                    style={{ flex: 1, background: activeVolunteer.availability === "Unavailable" ? "#dc635b" : "", color: activeVolunteer.availability === "Unavailable" ? "#fff" : "", padding: "10px" }}
                   >
                     🔴 Off
                   </button>
@@ -259,29 +202,14 @@ function VolunteerDashboard() {
           </div>
         </section>
 
-        {/* STATISTICS */}
         <div className="stat-grid">
-          <div className="stat-card">
-            <p>Active Pickups Pending</p>
-            <strong>{availablePickups.length}</strong>
-          </div>
-          <div className="stat-card">
-            <p>Currently Claimed/In Transit</p>
-            <strong>{claimedPickups.length}</strong>
-          </div>
-          <div className="stat-card">
-            <p>Total RESCUED Meals</p>
-            <strong>{donationSummary.total_meals_donated}</strong>
-          </div>
-          <div className="stat-card">
-            <p>Active Rescuers</p>
-            <strong>{volunteerSummary.available}</strong>
-          </div>
+          <div className="stat-card"><p>Active Pickups Pending</p><strong>{availablePickups.length}</strong></div>
+          <div className="stat-card"><p>Currently Claimed/In Transit</p><strong>{claimedPickups.length}</strong></div>
+          <div className="stat-card"><p>Total RESCUED Meals</p><strong>{donationSummary.total_meals_donated}</strong></div>
+          <div className="stat-card"><p>Active Rescuers</p><strong>{volunteerSummary.available}</strong></div>
         </div>
 
-        {/* DUAL PANELS */}
         <div className="dashboard-grid">
-          {/* Quick Pickup list */}
           <section className="panel">
             <div className="panel-header">
               <div>
@@ -292,10 +220,7 @@ function VolunteerDashboard() {
             </div>
             <div className="historical-table" style={{ marginTop: "15px" }}>
               <div className="table-row table-header">
-                <span>Date</span>
-                <span>Meals</span>
-                <span>Location/Desc</span>
-                <span>Action</span>
+                <span>Date</span><span>Meals</span><span>Location/Desc</span><span>Action</span>
               </div>
               {availablePickups.slice(0, 5).map((d) => (
                 <div className="table-row" key={d.id}>
@@ -319,7 +244,6 @@ function VolunteerDashboard() {
             </div>
           </section>
 
-          {/* Active claimed by user/any */}
           <section className="panel">
             <div className="panel-header">
               <div>
@@ -329,9 +253,7 @@ function VolunteerDashboard() {
             </div>
             <div className="historical-table" style={{ marginTop: "15px" }}>
               <div className="table-row table-header">
-                <span>Meals</span>
-                <span>Status</span>
-                <span>Action</span>
+                <span>Meals</span><span>Status</span><span>Action</span>
               </div>
               {claimedPickups.map((d) => (
                 <div className="table-row" key={d.id}>
@@ -360,7 +282,6 @@ function VolunteerDashboard() {
 
   const renderAvailablePickups = () => {
     const availablePickups = donations.filter((d) => d.status === "Available");
-
     return (
       <div className="prediction-page">
         <div className="prediction-heading">
@@ -375,13 +296,8 @@ function VolunteerDashboard() {
         <section className="historical-section">
           <div className="historical-table">
             <div className="table-row table-header">
-              <span>Date</span>
-              <span>Meals Count</span>
-              <span>Description</span>
-              <span>Status</span>
-              <span>Action</span>
+              <span>Date</span><span>Meals Count</span><span>Description</span><span>Status</span><span>Action</span>
             </div>
-
             {donationLoading ? (
               <div className="table-row"><span>Loading available pickups...</span></div>
             ) : availablePickups.length === 0 ? (
@@ -411,7 +327,6 @@ function VolunteerDashboard() {
 
   const renderClaimsHistory = () => {
     const myClaims = donations.filter((d) => d.status === "Claimed" || d.status === "Collected");
-
     return (
       <div className="prediction-page">
         <div className="prediction-heading">
@@ -426,13 +341,8 @@ function VolunteerDashboard() {
         <section className="historical-section">
           <div className="historical-table">
             <div className="table-row table-header">
-              <span>Date</span>
-              <span>Meals Count</span>
-              <span>Description</span>
-              <span>Status</span>
-              <span>Action</span>
+              <span>Date</span><span>Meals Count</span><span>Description</span><span>Status</span><span>Action</span>
             </div>
-
             {donationLoading ? (
               <div className="table-row"><span>Loading your claims...</span></div>
             ) : myClaims.length === 0 ? (
@@ -443,10 +353,7 @@ function VolunteerDashboard() {
                   <span>{donation.donation_date}</span>
                   <strong>{donation.meals}</strong>
                   <span>{donation.description || "Kitchen Surplus"}</span>
-                  <span style={{
-                    color: donation.status === "Collected" ? "#789087" : "#e0932c",
-                    fontWeight: "bold"
-                  }}>
+                  <span style={{ color: donation.status === "Collected" ? "#789087" : "#e0932c", fontWeight: "bold" }}>
                     {donation.status === "Collected" ? "Delivered ✓" : "In Transit 🚴"}
                   </span>
                   <div>
@@ -482,19 +389,15 @@ function VolunteerDashboard() {
 
   const renderContent = () => {
     switch (activeMenu) {
-      case "Available Pickups":
-        return renderAvailablePickups();
-      case "My Claims & History":
-        return renderClaimsHistory();
+      case "Available Pickups": return renderAvailablePickups();
+      case "My Claims & History": return renderClaimsHistory();
       case "Dashboard":
-      default:
-        return renderDashboard();
+      default: return renderDashboard();
     }
   };
 
   return (
     <div className="dashboard-layout" style={{ display: "flex", minHeight: "100vh" }}>
-      {/* SIDEBAR */}
       <aside className="sidebar" style={{ width: "250px", background: "#10231a", color: "white" }}>
         <div className="sidebar-logo">🌱 FoodBridge</div>
         <p className="sidebar-label">VOLUNTEER</p>
@@ -511,26 +414,16 @@ function VolunteerDashboard() {
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <button className="menu-item" onClick={() => navigate("/")}>
-            ← Home
-          </button>
-          <button className="menu-item" onClick={() => navigate("/login")}>
-            ⇥ Logout
-          </button>
+          <button className="menu-item" onClick={() => navigate("/")}>← Home</button>
+          <button className="menu-item" onClick={() => navigate("/login")}>⇥ Logout</button>
         </div>
       </aside>
 
-      {/* MAIN CONTENT AREA */}
       <main className="dashboard-main" style={{ flex: 1, padding: "35px 45px 60px", background: "#f4f8f5" }}>
         <header className="dashboard-topbar" style={{ display: "flex", justifyContent: "space-between", marginBottom: "45px" }}>
-          <div>
-            <span>FoodBridge</span> / <strong>{activeMenu}</strong>
-          </div>
-          <div>
-            🚴 {activeVolunteer ? activeVolunteer.name : "Volunteer Profile"}
-          </div>
+          <div>FoodBridge / <strong>{activeMenu}</strong></div>
+          <div>🚴 {activeVolunteer ? activeVolunteer.name : "Volunteer Profile"}</div>
         </header>
-
         <div className="dashboard-content">{renderContent()}</div>
       </main>
     </div>
