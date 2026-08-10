@@ -177,3 +177,6 @@ FoodBridge/
 - **Publish Directory**: `dist`
 - **API URL Configuration**: The frontend is configured to fetch from the backend via the centralized configuration file at [config.js](file:///c:/Users/Shivam/OneDrive/Desktop/FoodBridge/frontend/src/config.js). Simply update `API_URL` in that file if you redeploy the backend to a different URL.
 
+
+-**Live URL**: `https://hackmatrixfood.onrender.com`  (Click on this URL to access website)
+
