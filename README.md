@@ -151,6 +151,7 @@ FoodBridge/
 ├── frontend/
 │   ├── src/
 │   │   ├── pages/         # Dashboard panels & UI Pages
+│   │   ├── config.js      # Central API configuration (configures backend URL)
 │   │   ├── App.jsx        # Routing and entrypoint
 │   │   ├── main.jsx       # React DOM rendering
 │   │   └── App.css        # Core design system stylesheet
@@ -159,3 +160,20 @@ FoodBridge/
 │   └── vite.config.js
 └── README.md              # Main documentation
 ```
+
+---
+
+## ☁️ Deployment
+
+### Backend (Flask on Render)
+- **Service Type**: Web Service
+- **Build Command**: `pip install -r requirements.txt`
+- **Start Command**: `gunicorn app:app`
+- **Live URL**: `https://hackmatrix-mi53.onrender.com`
+
+### Frontend (Vite/React on Render)
+- **Service Type**: Static Site (or Web Service)
+- **Build Command**: `npm run build`
+- **Publish Directory**: `dist`
+- **API URL Configuration**: The frontend is configured to fetch from the backend via the centralized configuration file at [config.js](file:///c:/Users/Shivam/OneDrive/Desktop/FoodBridge/frontend/src/config.js). Simply update `API_URL` in that file if you redeploy the backend to a different URL.
+
